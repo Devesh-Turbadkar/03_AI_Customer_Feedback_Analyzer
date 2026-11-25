@@ -8,6 +8,10 @@ The application uses Google's Gemini AI to analyze customer reviews, identify se
 
 It supports both individual review analysis and bulk review uploads through CSV files. All analyzed reviews are stored in a database and displayed through an analytics dashboard.
 
+The original project involved organization-specific data, internal business requirements, and configurations. Due to confidentiality and organizational restrictions, the complete original implementation and business data cannot be published publicly.
+
+To demonstrate the technical implementation and application workflow, I have made necessary modifications and developed a standalone version that runs locally.
+
 ## Key Features
 
 - **Single Review Analysis:** Analyze individual customer reviews using Gemini AI.
