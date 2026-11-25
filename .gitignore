@@ -1,0 +1,9 @@
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.env
+*.py[cod]
+.DS_Store
+guide.txt
+.env.example

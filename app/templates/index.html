@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ app_name }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div><span class="eyebrow">CUSTOMER INTELLIGENCE</span><h1>Feedback Analyzer</h1></div>
+  <span class="badge">AI POWERED</span>
+</header>
+<main class="container">
+  <section class="stats">
+    <article class="stat"><span>Total reviews</span><strong id="total">0</strong></article>
+    <article class="stat"><span>Positive</span><strong id="positive">0</strong></article>
+    <article class="stat"><span>Negative</span><strong id="negative">0</strong></article>
+    <article class="stat"><span>Neutral</span><strong id="neutral">0</strong></article>
+  </section>
+  <section class="grid">
+    <article class="panel">
+      <h2>Analyze a review</h2>
+      <p class="muted">Enter customer feedback. Gemini will identify sentiment, key points and suggestions.</p>
+      <form id="review-form">
+        <label>Customer name <input id="customer" maxlength="120" placeholder="Optional"></label>
+        <label>Review text <textarea id="review" minlength="5" maxlength="10000" required placeholder="The product quality is good, but delivery was late..."></textarea></label>
+        <button type="submit">Analyze review</button>
+      </form>
+      <div id="message" class="message" role="status"></div>
+      <div class="divider"></div>
+      <h2>Upload reviews (CSV)</h2>
+      <p class="muted">CSV needs a <code>review_text</code> column. Optional columns: <code>customer_name</code>, <code>source</code>.</p>
+      <form id="csv-form"><input type="file" id="csv" accept=".csv" required><button class="secondary" type="submit">Upload CSV</button></form>
+    </article>
+    <article class="panel">
+      <div class="panel-heading"><div><h2>Business insights</h2><p class="muted">AI summary of your latest 100 reviews.</p></div><button id="insight-btn" class="secondary">Generate</button></div>
+      <div id="insights" class="insights muted">Add reviews, then generate insights.</div>
+    </article>
+  </section>
+  <section class="panel">
+    <div class="panel-heading"><div><h2>Customer reviews</h2><p class="muted">Search and filter analyzed feedback.</p></div>
+      <div class="filters"><input id="search" placeholder="Search reviews"><select id="sentiment"><option value="">All sentiments</option><option>Positive</option><option>Negative</option><option>Neutral</option></select></div>
+    </div>
+    <div id="reviews" class="review-list"><p class="muted">Loading reviews...</p></div>
+  </section>
+  <footer>Built with FastAPI · PostgreSQL · Pandas · Gemini API</footer>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
