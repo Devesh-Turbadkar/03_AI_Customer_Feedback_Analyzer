@@ -8,37 +8,68 @@ from app.config import settings
 
 
 def _generate_with_retry(client, prompt):
-    """Generate Gemini response with automatic retries."""
+    """Generate Gemini response with retry and automatic model fallback."""
 
     max_retries = 3
     retry_delays = [2, 4, 8]
 
-    for attempt in range(max_retries + 1):
-        try:
-            return client.models.generate_content(
-                model=settings.gemini_model,
-                contents=prompt,
-                config={"response_mime_type": "application/json"},
-            )
+    models = [
+        settings.gemini_model,
+        settings.gemini_fallback_model,
+    ]
 
-        except errors.APIError as exc:
+    for model_index, model_name in enumerate(models):
 
-            # Retry only temporary API errors.
-            if exc.code not in {429, 500, 502, 503, 504}:
-                raise
+        for attempt in range(max_retries + 1):
 
-            # Stop after the final attempt.
-            if attempt == max_retries:
-                raise
+            try:
+                print(f"Trying Gemini model: {model_name}")
 
-            wait_time = retry_delays[attempt]
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config={"response_mime_type": "application/json"},
+                )
 
-            print(
-                f"Gemini temporarily unavailable. "
-                f"Retrying in {wait_time} seconds..."
-            )
+                print(f"Gemini successful using: {model_name}")
 
-            time.sleep(wait_time)
+                return response
+
+            except errors.APIError as exc:
+
+                print(
+                    f"Gemini API Error | "
+                    f"Model: {model_name} | "
+                    f"Code: {exc.code} | "
+                    f"Details: {exc!r}"
+                )
+
+                # Do not retry permanent errors.
+                if exc.code not in {429, 500, 502, 503, 504}:
+                    raise
+
+                # Move to fallback after all retries.
+                if attempt == max_retries:
+
+                    if model_index < len(models) - 1:
+                        print(
+                            f"Primary model unavailable. "
+                            f"Switching to {models[model_index + 1]}"
+                        )
+                        break
+
+                    raise
+
+                wait_time = retry_delays[attempt]
+
+                print(
+                    f"Retrying {model_name} "
+                    f"in {wait_time} seconds..."
+                )
+
+                time.sleep(wait_time)
+
+    raise RuntimeError("All configured Gemini models failed.")
 
 
 def analyze_review(review_text: str) -> dict:
